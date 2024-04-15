@@ -1,0 +1,6 @@
+datasets
+jupyterlab
+nltk
+tqdm
+transformers
+mlx

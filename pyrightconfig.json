@@ -1,0 +1,20 @@
+{
+  "include": ["."],
+  "exclude": ["**/node_modules", "**/__pycache__"],
+  "defineConstant": {
+    "DEBUG": true
+  },
+  "reportMissingImports": true,
+  "reportMissingTypeStubs": false,
+  "reportUnboundVariable": false,
+  "pythonVersion": "3.12",
+  "pythonPlatform": "All",
+  "executionEnvironments": [
+    {
+      "root": ".",
+      "pythonVersion": "3.12",
+      "pythonPlatform": "All",
+      "extraPaths": [".venv/lib/python3.12/site-packages/"]
+    }
+  ]
+}
