@@ -18,7 +18,6 @@ class LanguageModel(nn.Module):
         self.llm_head = nn.Linear(n_embed, vocab_size)
 
         self.optim = Adam(learning_rate=lr)
-        # self.loss = # nn.losses.cross_entropy(logits, targets), i.e. function
 
     def __call__(self, idxs):
         B, T = idxs.shape
@@ -33,23 +32,6 @@ class LanguageModel(nn.Module):
 
         return logits
 
-    def training_step(self, idxs):
-        pass
-
     def get_size(self):
         num_params = sum(v.size for _, v in tree_flatten(self.parameters()))
         return num_params
-
-
-# B, T, C = 2, 8, 32
-
-# model = LanguageModel(vocab_size=10_000, n_embed=C,
-#                       context_len=T, n_blocks=3, n_heads=2)
-
-# from mlx.utils import tree_flatten
-# num_params = sum(v.size for _, v in tree_flatten(model.parameters()))
-# print(num_params)
-
-# x = mx.random.randint(0, 100, (B, T))
-
-# print(model(x).shape)

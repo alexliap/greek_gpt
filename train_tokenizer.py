@@ -14,7 +14,7 @@ print(f'\n Number of text samples in dataset: {len(data)} \n')
 tokenizer = AutoTokenizer.from_pretrained("gpt2", trust_remote_code=True,
                                           bos_token = "<BOS>", eos_token = "<EOS>",
                                           unk_token = "<UNK>", sep_token = "<SEP>",
-                                          split_special_tokens=False,
+                                          pad_token = "<PAD>", split_special_tokens=False,
                                           model_max_length = int(3e5))
 
 def batch_iterator(dataset: List[str], batch_size: int):
