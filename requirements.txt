@@ -1,6 +1,10 @@
 datasets
 jupyterlab
+mlx
 nltk
+pre-commit
+torch
+torchaudio
+torchvision
 tqdm
 transformers
-mlx

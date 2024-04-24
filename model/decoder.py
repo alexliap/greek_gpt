@@ -1,17 +1,24 @@
-import mlx.core as mx
 import mlx.nn as nn
-from model.multihead import MultiHeadAttention
+
 from model.experts import SparseMoE
+from model.multihead import MultiHeadAttention
+
 
 class Transformer(nn.Module):
-    def __init__(self, n_embed: int, n_heads: int, n_experts: int, top_k: int = 2,
-                 dropout: float = 0.2):
+    def __init__(
+        self,
+        n_embed: int,
+        n_heads: int,
+        n_experts: int,
+        top_k: int = 2,
+        dropout: float = 0.2,
+    ):
         super().__init__()
-        self.multi_attention = MultiHeadAttention(n_heads=n_heads,
-                                                  n_embed=n_embed)
+        self.multi_attention = MultiHeadAttention(n_heads=n_heads, n_embed=n_embed)
         # TODO: to be replaces to MoE
-        self.moe = SparseMoE(n_experts=n_experts, n_embed=n_embed,
-                             top_k=top_k, dropout=dropout)
+        self.moe = SparseMoE(
+            n_experts=n_experts, n_embed=n_embed, top_k=top_k, dropout=dropout
+        )
         self.layernorm_1 = nn.LayerNorm(n_embed)
         self.layernorm_2 = nn.LayerNorm(n_embed)
 
@@ -20,13 +27,28 @@ class Transformer(nn.Module):
         x = x + self.moe(self.layernorm_2(x))
         return x
 
+
 class TransformerBlocks(nn.Module):
-    def __init__(self, n_blocks: int, n_embed: int, n_heads: int,
-                 n_experts: int, top_k: int = 2, dropout: float = 0.2):
+    def __init__(
+        self,
+        n_blocks: int,
+        n_embed: int,
+        n_heads: int,
+        n_experts: int,
+        top_k: int = 2,
+        dropout: float = 0.2,
+    ):
         super().__init__()
-        self.blocks = [Transformer(n_embed=n_embed, n_heads=n_heads,
-                                   n_experts=n_experts, top_k=top_k,
-                                   dropout=dropout) for _ in range(n_blocks)]
+        self.blocks = [
+            Transformer(
+                n_embed=n_embed,
+                n_heads=n_heads,
+                n_experts=n_experts,
+                top_k=top_k,
+                dropout=dropout,
+            )
+            for _ in range(n_blocks)
+        ]
         self.laynernorm = nn.LayerNorm(n_embed)
 
     def __call__(self, x):

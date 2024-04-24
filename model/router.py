@@ -2,6 +2,7 @@ import mlx.core as mx
 import mlx.nn as nn
 import numpy as np
 
+
 class Router(nn.Module):
     def __init__(self, n_embed: int, n_experts: int, top_k: int = 2):
         super().__init__()
@@ -20,15 +21,16 @@ class Router(nn.Module):
         sparse = np.full_like(logits, float("-inf"))
         # gausssian noise for load balancing
         # gaussian noise * softplus(noise network)
-        noise = mx.random.normal([B, T, self.n_experts])*nn.Softplus()(noise_logits)
+        noise = mx.random.normal([B, T, self.n_experts]) * nn.Softplus()(noise_logits)
         # get indices of top k values
-        top_k_indices = np.argsort(logits + noise, kind='quicksort',
-                                    axis=-1)[:, :, -self.top_k:]
+        top_k_indices = np.argsort(logits + noise, kind="quicksort", axis=-1)[
+            :, :, -self.top_k :
+        ]
         # get top k values
         topk = mx.topk(logits + noise, self.top_k)
 
-        np.put_along_axis(sparse, top_k_indices, topk, axis = -1)
-        sparse = mx.softmax(mx.array(sparse), axis = -1)
+        np.put_along_axis(sparse, top_k_indices, topk, axis=-1)
+        sparse = mx.softmax(mx.array(sparse), axis=-1)
 
         return sparse, mx.array(top_k_indices)
 
