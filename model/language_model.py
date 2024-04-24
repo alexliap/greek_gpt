@@ -36,7 +36,7 @@ class LanguageModel(nn.Module):
         self.optim = Adam(learning_rate=lr)
 
     def __call__(self, idxs):
-        B, T = idxs.shape
+        _, T = idxs.shape
 
         token_embed = self.embed_layer(idxs)
         position_embed = self.positional_embed(mx.arange(0, T))
