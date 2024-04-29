@@ -1,3 +1,5 @@
+import os
+import json
 import mlx.core as mx
 import mlx.nn as nn
 from mlx.optimizers import Adam
@@ -20,6 +22,16 @@ class LanguageModel(nn.Module):
         lr: float = 1e-3,
     ):
         super().__init__()
+        self.vocab_size = vocab_size
+        self.n_embed = n_embed
+        self.context_len = context_len
+        self.n_blocks = n_blocks
+        self.n_heads = n_heads
+        self.n_experts = n_experts
+        self.top_k = top_k
+        self.dropout  =dropout
+        self.lr = lr
+
         self.embed_layer = nn.Embedding(vocab_size, n_embed)
         self.positional_embed = nn.Embedding(context_len, n_embed)
         self.blocks = TransformerBlocks(
@@ -51,3 +63,36 @@ class LanguageModel(nn.Module):
     def get_size(self):
         num_params = sum(v.size for _, v in tree_flatten(self.parameters()))
         return num_params
+
+    def save_model(self, directory):
+        if not os.path.exists(directory):
+            os.mkdir(directory)
+
+        model_config = {"vocab_size": self.vocab_size,
+                        "n_embed": self.n_embed,
+                        "context_len": self.context_len,
+                        "n_blocks": self.n_blocks,
+                        "n_heads": self.n_heads,
+                        "n_experts": self.n_experts,
+                        "top_k": self.top_k,
+                        "dropout": self.dropout,
+                        "lr": self.lr}
+
+        with open(directory + "model_config.json", "w") as outfile:
+            json.dump(model_config, outfile)
+
+        flat_params = tree_flatten(self.parameters())
+        mx.save_safetensors(directory + "model_params", dict(flat_params))
+
+def load_model(directory):
+    with open(directory + 'model_config.json') as json_file:
+        model_config = json.load(json_file)
+
+    model = LanguageModel(vocab_size=model_config["vocab_size"], n_embed=model_config["n_embed"],
+                            context_len=model_config["context_len"],
+                            n_blocks=model_config["n_blocks"], n_heads=model_config["n_heads"],
+                            n_experts=model_config["n_experts"], top_k=model_config["top_k"],
+                            lr=model_config["lr"])
+    model.load_weights(directory + "model_params.safetensors")
+
+    return model
