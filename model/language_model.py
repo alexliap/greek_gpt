@@ -61,6 +61,20 @@ class LanguageModel(nn.Module):
 
         return logits
 
+    def inference(self, idxs):
+        self.train(False)
+        _, T = idxs.shape
+
+        token_embed = self.embed_layer(idxs)
+        position_embed = self.positional_embed(mx.arange(0, T))
+        x = token_embed + position_embed
+        x = self.blocks(x)
+        x = self.layer_norm(x)
+        logits = self.llm_head(x)
+        logits = logits[:, -1, :]
+
+        return logits
+
     def get_size(self):
         num_params = sum(v.size for _, v in tree_flatten(self.parameters()))
         return num_params
