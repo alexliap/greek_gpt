@@ -6,13 +6,13 @@ from model.router import Router
 
 
 class Expert(nn.Module):
-    def __init__(self, n_embed: int, dropout: float = 0.2):
+    def __init__(self, n_embed: int, hidden_multiplier: int = 2, dropout: float = 0.2):
         super().__init__()
 
         self.expert = nn.Sequential(
-            nn.Linear(n_embed, 2 * n_embed),
+            nn.Linear(n_embed, hidden_multiplier * n_embed),
             nn.ReLU(),
-            nn.Linear(2 * n_embed, n_embed),
+            nn.Linear(hidden_multiplier * n_embed, n_embed),
             nn.Dropout(dropout),
         )
 
@@ -23,18 +23,27 @@ class Expert(nn.Module):
 
 class SparseMoE(nn.Module):
     def __init__(
-        self, n_experts: int, n_embed: int, top_k: int = 2, dropout: float = 0.2
+        self,
+        n_experts: int,
+        n_embed: int,
+        hidden_multiplier: int = 2,
+        top_k: int = 2,
+        dropout: float = 0.2,
     ):
         super().__init__()
 
         self.router = Router(n_embed=n_embed, n_experts=n_experts, top_k=top_k)
         self.experts = [
-            Expert(n_embed=n_embed, dropout=dropout) for _ in range(n_experts)
+            Expert(
+                n_embed=n_embed, hidden_multiplier=hidden_multiplier, dropout=dropout
+            )
+            for _ in range(n_experts)
         ]
 
     def __call__(self, x):
         B, T, C = x.shape
         gating_output, indices = self.router(x)
+
         final_output = mx.zeros_like(x)
         final_output = final_output.reshape(-1, final_output.shape[-1])
 

@@ -1,15 +1,16 @@
 import warnings
+from typing import Union
 
 import mlx.core as mx
 import mlx.nn as nn
 from tqdm import tqdm
 
-from model.language_model import LanguageModel
+from model.language_model import LanguageModel, TransformerLLM
 
 warnings.filterwarnings("ignore")
 
 
-def bench_llm(model: LanguageModel, val_data):
+def bench_llm(model: Union[LanguageModel, TransformerLLM], val_data):
     cross_entropy = 0
     total_preds = 0
     log_prob_sum = 0

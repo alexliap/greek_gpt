@@ -1,6 +1,8 @@
+from typing import Union
+
 import mlx.nn as nn
 
-from model.experts import SparseMoE
+from model.experts import Expert, SparseMoE
 from model.multihead import MultiHeadAttention
 
 
@@ -9,22 +11,38 @@ class Transformer(nn.Module):
         self,
         n_embed: int,
         n_heads: int,
-        n_experts: int,
-        top_k: int = 2,
+        hidden_multiplier: int = 2,
+        n_experts: Union[int, None] = None,
+        top_k: Union[int, None] = None,
         dropout: float = 0.2,
     ):
         super().__init__()
         self.multi_attention = MultiHeadAttention(n_heads=n_heads, n_embed=n_embed)
-        # TODO: to be replaces to MoE
-        self.moe = SparseMoE(
-            n_experts=n_experts, n_embed=n_embed, top_k=top_k, dropout=dropout
-        )
+
+        if n_experts is not None and top_k is not None:
+            self.moe = SparseMoE(
+                n_experts=n_experts,
+                n_embed=n_embed,
+                hidden_multiplier=hidden_multiplier,
+                top_k=top_k,
+                dropout=dropout,
+            )
+            self.is_moe = True
+        else:
+            self.mlp = Expert(
+                n_embed=n_embed, hidden_multiplier=hidden_multiplier, dropout=dropout
+            )
+            self.is_moe = False
+
         self.layernorm_1 = nn.LayerNorm(n_embed)
         self.layernorm_2 = nn.LayerNorm(n_embed)
 
     def __call__(self, x):
         x = x + self.multi_attention(self.layernorm_1(x))
-        x = x + self.moe(self.layernorm_2(x))
+        if self.is_moe:
+            x = x + self.moe(self.layernorm_2(x))
+        else:
+            x = x + self.mlp(self.layernorm_2(x))
         return x
 
 
@@ -34,8 +52,9 @@ class TransformerBlocks(nn.Module):
         n_blocks: int,
         n_embed: int,
         n_heads: int,
-        n_experts: int,
-        top_k: int = 2,
+        hidden_multiplier: int = 2,
+        n_experts: Union[int, None] = None,
+        top_k: Union[int, None] = None,
         dropout: float = 0.2,
     ):
         super().__init__()
@@ -43,6 +62,7 @@ class TransformerBlocks(nn.Module):
             Transformer(
                 n_embed=n_embed,
                 n_heads=n_heads,
+                hidden_multiplier=hidden_multiplier,
                 n_experts=n_experts,
                 top_k=top_k,
                 dropout=dropout,
@@ -56,18 +76,3 @@ class TransformerBlocks(nn.Module):
             x = transformer(x)
         x = self.laynernorm(x)
         return x
-
-
-# B, T, C = 1, 8, 32
-
-# trans = Transformer(n_embed=C, n_heads=4)
-
-# x = mx.random.randint(0,5, (B, T, C))
-
-# print(trans(x).shape)
-
-# blocks = TransformerBlocks(n_blocks=2, n_embed=C, n_heads=2)
-
-# x = mx.random.randint(0,5, (B, T, C))
-
-# print(blocks(x).shape)

@@ -16,9 +16,9 @@ class Router(nn.Module):
         B, T, _ = x.shape
         # router output
         logits = self.route_network(x)
-        noise_logits = self.noise_net(x)
         # we must mask the the output for the other experts
         sparse = np.full_like(logits, float("-inf"))
+        noise_logits = self.noise_net(x)
         # gausssian noise for load balancing
         # gaussian noise * softplus(noise network)
         noise = mx.random.normal([B, T, self.n_experts]) * nn.Softplus()(noise_logits)
@@ -31,6 +31,29 @@ class Router(nn.Module):
 
         np.put_along_axis(sparse, top_k_indices, topk, axis=-1)
         sparse = mx.softmax(mx.array(sparse), axis=-1)
+        # if self.training:
+        #     noise_logits = self.noise_net(x)
+        #     # gausssian noise for load balancing
+        #     # gaussian noise * softplus(noise network)
+        #     noise = mx.random.normal([B, T, self.n_experts]) * nn.Softplus()(noise_logits)
+        #     # get indices of top k values
+        #     top_k_indices = np.argsort(logits + noise, kind="quicksort", axis=-1)[
+        #         :, :, -self.top_k :
+        #     ]
+        #     # get top k values
+        #     topk = mx.topk(logits + noise, self.top_k)
+
+        #     np.put_along_axis(sparse, top_k_indices, topk, axis=-1)
+        #     sparse = mx.softmax(mx.array(sparse), axis=-1)
+        # else:
+        #     top_k_indices = np.argsort(logits[:, -1, :], kind="quicksort", axis=-1)[
+        #         :, -self.top_k :
+        #     ]
+        #     # get top k values
+        #     topk = mx.topk(logits[:, -1, :], self.top_k)
+
+        #     np.put_along_axis(sparse[:, -1, :], top_k_indices, topk, axis=-1)
+        #     sparse = mx.softmax(mx.array(sparse[:, -1, :]), axis=-1)
 
         return sparse, mx.array(top_k_indices)
 
