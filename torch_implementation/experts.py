@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from model_pytorch.router import Router
+from torch_implementation.router import Router
 
 
 class Expert(nn.Module):
