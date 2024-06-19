@@ -55,7 +55,6 @@ class LanguageModel(L.LightningModule):
     def training_step(self, batch, batch_idx):
         # training_step defines the train loop.
         x, y = batch
-        print(x.view(-1,256), y.view(-1,256))
         logits = self.forward(x)
         loss = F.cross_entropy(logits, y.view(-1), reduction='mean')
         return loss

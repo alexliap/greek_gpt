@@ -1,9 +1,12 @@
 import os
 import pickle
+import nltk
 
 import nltk.data
 from datasets import load_dataset
 from tqdm import tqdm
+
+nltk.download('punkt')
 
 if not os.path.exists("data/"):
     os.mkdir("data/")

@@ -1,10 +1,12 @@
 datasets
 jupyterlab
-mlx
 nltk
 pre-commit
+--extra-index-url https://download.pytorch.org/whl/cu121
 torch
 torchaudio
 torchvision
 tqdm
 transformers
+sentencepiece
+lightning
