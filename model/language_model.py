@@ -1,8 +1,10 @@
 import json
 import os
+from time import time
 
 import mlx.core as mx
 import mlx.nn as nn
+import numpy as np
 from mlx.optimizers import Adam
 from mlx.utils import tree_flatten
 
@@ -74,6 +76,34 @@ class LanguageModel(nn.Module):
         logits = logits[:, -1, :]
 
         return logits
+
+    def generate(
+        self,
+        query: str,
+        tokenizer,
+        max_tokens: int,
+        temperature: float = 1.0,
+        print_time: bool = False,
+    ):
+        start = time()
+        for i in range(max_tokens):
+            tokens = mx.array(tokenizer(query)["input_ids"]).reshape(1, -1)
+            if len(tokens) > 256:
+                tokens = tokens[-256:]
+            out = self.inference(tokens) / temperature
+            s_out = mx.softmax(out)
+            # cast to float64 and normalise to avoid error in multinomial
+            s_out = np.array(s_out).astype(np.float64)
+            s_out /= np.sum(s_out)
+
+            chosen_token = np.argmax(np.random.multinomial(1, pvals=s_out[0]))
+            query += tokenizer.decode(chosen_token.item())
+
+        end = time()
+        if print_time:
+            print(f"Time take to generate: {round(end-start, 3)}\n\n")
+
+        return query
 
     def get_size(self):
         num_params = sum(v.size for _, v in tree_flatten(self.parameters()))
