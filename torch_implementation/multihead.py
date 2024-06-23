@@ -1,19 +1,26 @@
 import torch
 import torch.nn as nn
+
 from torch_implementation.head import SelfAttentionHead
 
 
 class MultiHeadAttention(nn.Module):
     """Multihead Attention module."""
 
-    def __init__(self, context_len: int, n_heads: int, n_embed: int, dropout: float = 0.2):
+    def __init__(
+        self, context_len: int, n_heads: int, n_embed: int, dropout: float = 0.2
+    ):
         super().__init__()
         self.n_head = n_heads
         self.n_embed = n_embed
         self.head_size = n_embed // n_heads
         self.heads = nn.ModuleList(
             [
-                SelfAttentionHead(input_size=self.n_embed, context_len=context_len, head_size=self.head_size)
+                SelfAttentionHead(
+                    input_size=self.n_embed,
+                    context_len=context_len,
+                    head_size=self.head_size,
+                )
                 for _ in range(self.n_head)
             ]
         )

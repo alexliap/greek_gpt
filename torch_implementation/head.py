@@ -6,7 +6,9 @@ import torch.nn.functional as F
 class SelfAttentionHead(nn.Module):
     """Single Self Attention Head."""
 
-    def __init__(self, input_size: int, context_len: int, head_size: int, dropout: float = 0.2):
+    def __init__(
+        self, input_size: int, context_len: int, head_size: int, dropout: float = 0.2
+    ):
         super().__init__()
 
         self.head_size = head_size
@@ -32,7 +34,9 @@ class SelfAttentionHead(nn.Module):
         queries = self.query_proj(x)
         values = self.values_proj(x)
 
-        W = torch.matmul(keys, torch.transpose(queries, -2, -1)) * self.head_size ** (-0.5)
+        W = torch.matmul(keys, torch.transpose(queries, -2, -1)) * self.head_size ** (
+            -0.5
+        )
         W = W.masked_fill(self.tril[:T, :T] == 0, float("-inf"))
         W = F.softmax(W, dim=-1)
         W = self.dropout(W)
