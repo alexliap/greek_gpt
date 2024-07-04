@@ -1,12 +1,13 @@
+--extra-index-url https://download.pytorch.org/whl/cu118
 datasets
 jupyterlab
+lightning
 nltk
 pre-commit
---extra-index-url https://download.pytorch.org/whl/cu118
+rouge
+sacrebleu
 torch
 torchaudio
 torchvision
 tqdm
 transformers
-sentencepiece
-lightning

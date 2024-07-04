@@ -1,4 +1,5 @@
 import torch.nn as nn
+
 from torch_implementation.experts import SparseMoE
 from torch_implementation.multihead import MultiHeadAttention
 
@@ -14,7 +15,9 @@ class Transformer(nn.Module):
         dropout: float = 0.2,
     ):
         super().__init__()
-        self.multi_attention = MultiHeadAttention(context_len=context_len, n_heads=n_heads, n_embed=n_embed)
+        self.multi_attention = MultiHeadAttention(
+            context_len=context_len, n_heads=n_heads, n_embed=n_embed
+        )
         # TODO: to be replaces to MoE
         self.moe = SparseMoE(
             n_experts=n_experts, n_embed=n_embed, top_k=top_k, dropout=dropout
