@@ -57,7 +57,7 @@ class LanguageModel(L.LightningModule):
         x, y = batch
 
         logits = self.forward(x)
-        loss = F.cross_entropy(logits, y.view(-1), reduction='mean')
+        loss = F.cross_entropy(logits, y.view(-1), reduction="mean")
 
         self.log("train_ce_loss", loss, prog_bar=True)
 
