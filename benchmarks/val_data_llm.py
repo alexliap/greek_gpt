@@ -46,9 +46,9 @@ def bench_llm(model: Union[LanguageModel, TransformerLLM], val_data):
                 log_prob_sum += mx.sum(mx.log(mx.take(probs, y, axis=1).diag()))
 
         ce_string = (
-            f"Mean Cross Entropy: {round((cross_entropy/total_preds).item(), 3)}"
+            f"Mean Cross Entropy: {round((cross_entropy / total_preds).item(), 3)}"
         )
-        ppl_string = f"Mean PPL: {round(mx.exp(-log_prob_sum/total_preds).item(), 3)}"
+        ppl_string = f"Mean PPL: {round(mx.exp(-log_prob_sum / total_preds).item(), 3)}"
 
         bar.set_description(ce_string + " | " + ppl_string)
 

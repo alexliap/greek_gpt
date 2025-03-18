@@ -36,11 +36,11 @@ def bench_ngram(model: NGram, val_data):
         probs = nn.softmax(out)
         log_prob_sum += mx.sum(mx.log(mx.take(probs, y, axis=1).diag()))
 
-        model_config = f"{model.context_len+1}-Gram: "
+        model_config = f"{model.context_len + 1}-Gram: "
         ce_string = (
-            f"Mean Cross Entropy: {round((cross_entropy/total_preds).item(), 3)}"
+            f"Mean Cross Entropy: {round((cross_entropy / total_preds).item(), 3)}"
         )
-        ppl_string = f"Mean PPL: {round(mx.exp(-log_prob_sum/total_preds).item(), 3)}"
+        ppl_string = f"Mean PPL: {round(mx.exp(-log_prob_sum / total_preds).item(), 3)}"
 
         bar.set_description(model_config + ce_string + " | " + ppl_string)
 
