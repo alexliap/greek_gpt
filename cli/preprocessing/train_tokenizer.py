@@ -19,7 +19,7 @@ tokenizer = AutoTokenizer.from_pretrained(
     # sep_token="<SEP>",
     # pad_token="<PAD>",
     split_special_tokens=False,
-    model_max_length=int(1e5),
+    model_max_length=int(3e5),
 )
 
 

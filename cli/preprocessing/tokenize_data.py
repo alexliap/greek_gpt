@@ -26,10 +26,3 @@ for tokenizer in tokenizer_dict.keys():
     tokenized_data = tokenize_txt_dataset(tokenizer_dict[tokenizer], dataset)
     with open(f"data/tokenized_data/{tokenizer}_data.pkl", "wb") as file:
         pickle.dump(tokenized_data, file)
-
-# for tokenizer in tokenizer_dict.keys():
-#     test_tokenized_data = []
-#     for text in tqdm(test_data, bar_format="{l_bar}{bar:20}{r_bar}{bar:-20b}"):
-#         test_tokenized_data.append(tokenizer_dict[tokenizer](text)["input_ids"])
-#     with open(f"data/tokenized_data/test_{tokenizer}_data.pkl", "wb") as file:
-#         pickle.dump(test_tokenized_data, file)

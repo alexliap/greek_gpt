@@ -1,0 +1,53 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "greek_gpt"
+dynamic = [
+  "version",
+]
+dependencies = [
+  "torch",
+  "torchaudio",
+  "torchvision",
+  "tqdm",
+  "transformers",
+  "lightning",
+  "datasets",
+  "matplotlib",
+]
+
+requires-python = ">=3.10"
+authors = [
+  {name = "Alexandros Liapatis", email = "alexandrosliapates@gmail.com"}
+]
+description = "Trying to create a small greek pretrained LLM"
+readme = "README.md"
+keywords = ["Transformer", "Deep Learning", "PyTorch"]
+
+[project.optional-dependencies]
+dev = [
+  "hatch",
+  "ruff",
+  "isort",
+  "pre-commit",
+  "jupyter",
+  "ipywidgets",
+  "pyright",
+  "ipywidgets",
+  "jupyterlab",
+  "nltk",
+  "pre-commit",
+  "rouge",
+  "sacrebleu",
+]
+
+[tool.hatch.version]
+path = "src/__about__.py"
+
+[tool.hatch.build]
+packages = ["src/"]
+
+[tool.hatch.metadata]
+allow-direct-references=true
