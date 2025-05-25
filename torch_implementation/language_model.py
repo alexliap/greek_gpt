@@ -6,7 +6,7 @@ import torch.nn.functional as F
 from torch_implementation.decoder import TransformerBlocks
 
 
-class LanguageModel(L.LightningModule):
+class GreekGPT(nn.Module):
     def __init__(
         self,
         vocab_size: int,
@@ -17,10 +17,8 @@ class LanguageModel(L.LightningModule):
         n_experts: int = 4,
         top_k: int = 2,
         dropout: float = 0.2,
-        lr: float = 1e-3,
     ):
         super().__init__()
-        self.save_hyperparameters()
 
         self.embed_layer = nn.Embedding(vocab_size, n_embed)
         self.positional_embed = nn.Embedding(context_len, n_embed)
@@ -36,14 +34,12 @@ class LanguageModel(L.LightningModule):
         self.layer_norm = nn.LayerNorm(n_embed)
         self.llm_head = nn.Linear(n_embed, vocab_size)
 
-        self.lr = lr
-
     def forward(self, idxs):
         idxs = idxs.view(-1, 256)
         _, T = idxs.shape
 
         token_embed = self.embed_layer(idxs)
-        position_embed = self.positional_embed(torch.arange(0, T).to("cuda"))
+        position_embed = self.positional_embed(torch.arange(0, T))
         x = token_embed + position_embed
         x = self.blocks(x)
         x = self.layer_norm(x)
@@ -51,6 +47,26 @@ class LanguageModel(L.LightningModule):
         logits = logits.reshape(-1, logits.shape[-1])
 
         return logits
+
+    def count_params(self):
+        return sum(p.numel() for p in self.parameters())
+
+
+class LanguageModel(L.LightningModule):
+    def __init__(
+        self,
+        model: GreekGPT,
+        lr: float = 1e-3,
+    ):
+        super().__init__()
+        self.save_hyperparameters()
+
+        self.model = model
+
+        self.lr = lr
+
+    def forward(self, idxs):
+        return self.model(idxs)
 
     def training_step(self, batch, batch_idx):
         # training_step defines the train loop.

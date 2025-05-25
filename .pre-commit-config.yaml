@@ -33,3 +33,8 @@ repos:
       # Run the formatter.
       - id: ruff-format
         types_or: [python, jupyter]
+
+  - repo: https://github.com/kynan/nbstripout
+    rev: 0.8.1
+    hooks:
+      - id: nbstripout

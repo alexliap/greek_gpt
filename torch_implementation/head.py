@@ -34,7 +34,7 @@ class SelfAttentionHead(nn.Module):
         queries = self.query_proj(x)
         values = self.values_proj(x)
 
-        W = torch.matmul(keys, torch.transpose(queries, -2, -1)) * self.head_size ** (
+        W = torch.matmul(queries, torch.transpose(keys, -2, -1)) * self.head_size ** (
             -0.5
         )
         W = W.masked_fill(self.tril[:T, :T] == 0, float("-inf"))
