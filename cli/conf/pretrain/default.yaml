@@ -1,15 +1,15 @@
 defaults:
   - _self_
-  - model: greek_gpt_test
+  - model: greek_gpt_base
 
 train_dataloader:
   _target_: src.training.dataloader.CustomDataLoader
-  data_path: "data/tokenized_data/tokenizer_1000_data.pkl"
+  data_path: "data/tokenized_data/tokenizer_5000_data.pkl"
   batch_size: 256
 
 trainer:
   _target_: lightning.Trainer
-  accelerator: mps
+  accelerator: gpu
   strategy: auto
   devices: 1
   num_nodes: 1

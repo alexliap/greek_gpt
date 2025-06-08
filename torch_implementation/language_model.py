@@ -20,7 +20,7 @@ class GreekGPT(nn.Module):
     ):
         super().__init__()
 
-        self.embed_layer = nn.Embedding(vocab_size, n_embed)
+        self.embed_layer = nn.Embedding(vocab_size + 257, n_embed)
         self.positional_embed = nn.Embedding(context_len, n_embed)
         self.blocks = TransformerBlocks(
             n_blocks=n_blocks,
@@ -32,12 +32,12 @@ class GreekGPT(nn.Module):
             dropout=dropout,
         )
         self.layer_norm = nn.LayerNorm(n_embed)
-        self.llm_head = nn.Linear(n_embed, vocab_size)
+        self.llm_head = nn.Linear(n_embed, vocab_size + 257)
 
         self.context_len = context_len
 
     def forward(self, idxs):
-        # idxs = idxs.view(-1, self.context_len)
+        idxs = idxs.view(-1, idxs.size(0))
         _, T = idxs.shape
 
         token_embed = self.embed_layer(idxs)
@@ -73,9 +73,11 @@ class LanguageModel(L.LightningModule):
     def training_step(self, batch, batch_idx):
         # training_step defines the train loop.
         x, y = batch
+        x = x[0]
+        y = y[0]
 
         logits = self.forward(x)
-        loss = F.cross_entropy(logits, y.view(-1), reduction="mean")
+        loss = F.cross_entropy(logits, y.view(-1))
 
         self.log("train_ce_loss", loss, prog_bar=True)
 

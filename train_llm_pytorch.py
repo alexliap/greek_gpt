@@ -11,8 +11,6 @@ def main(cfg: DictConfig):
 
     train_dataloader = instantiate(cfg.train_dataloader).get_dataloder()
 
-    # print(pretrain_lm.model.count_params() / int(1e6))
-
     trainer = instantiate(cfg.trainer)
 
     trainer.fit(pretrain_lm, train_dataloaders=train_dataloader)
