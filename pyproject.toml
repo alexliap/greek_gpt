@@ -18,7 +18,9 @@ dependencies = [
   "matplotlib",
   "mlflow",
   "hydra-core",
-  "tensorboard"
+  "tensorboard",
+  "azure-storage-blob",
+  "azure-identity",
 ]
 
 requires-python = ">=3.10"
