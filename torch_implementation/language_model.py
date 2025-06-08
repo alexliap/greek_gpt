@@ -83,6 +83,19 @@ class LanguageModel(L.LightningModule):
 
         return loss
 
+    def validation_step(self, batch, batch_idx):
+        # training_step defines the train loop.
+        x, y = batch
+        x = x[0]
+        y = y[0]
+
+        logits = self.forward(x)
+        loss = F.cross_entropy(logits, y.view(-1))
+
+        self.log("val_ce_loss", loss, prog_bar=True)
+
+        return loss
+
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(params=self.parameters(), lr=self.lr)
         return optimizer

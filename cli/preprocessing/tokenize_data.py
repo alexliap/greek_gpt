@@ -27,5 +27,10 @@ for tokenizer in tokenizer_dict.keys():
 
     flattened_data = [token for token_list in tokenized_data for token in token_list]
 
-    with open(f"data/tokenized_data/{tokenizer}_data.pkl", "wb") as file:
+    val_data = [token for token_list in tokenized_data[::200] for token in token_list]
+
+    with open(f"data/tokenized_data/train_{tokenizer}_data.pkl", "wb") as file:
         pickle.dump(flattened_data, file)
+
+    with open(f"data/tokenized_data/val_{tokenizer}_data.pkl", "wb") as file:
+        pickle.dump(val_data, file)

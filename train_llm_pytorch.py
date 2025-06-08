@@ -11,9 +11,13 @@ def main(cfg: DictConfig):
 
     train_dataloader = instantiate(cfg.train_dataloader).get_dataloder()
 
+    val_dataloader = instantiate(cfg.val_dataloader).get_dataloder()
+
     trainer = instantiate(cfg.trainer)
 
-    trainer.fit(pretrain_lm, train_dataloaders=train_dataloader)
+    trainer.fit(
+        pretrain_lm, train_dataloaders=train_dataloader, val_dataloaders=val_dataloader
+    )
 
 
 if __name__ == "__main__":

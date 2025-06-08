@@ -3,10 +3,10 @@ model:
   _target_: torch_implementation.language_model.GreekGPT
   vocab_size: 1000
   n_embed: 64
-  context_len: 64
+  context_len: 256
   n_blocks: 2
   n_heads: 2
   n_experts: 2
   top_k: 1
   dropout: 0.2
-lr: 1
+lr: 1e-4

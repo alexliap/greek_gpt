@@ -1,10 +1,15 @@
 defaults:
   - _self_
-  - model: greek_gpt_base
+  - model: greek_gpt_test
 
 train_dataloader:
   _target_: src.training.dataloader.CustomDataLoader
-  data_path: "data/tokenized_data/tokenizer_5000_data.pkl"
+  data_path: "data/tokenized_data/train_tokenizer_1000_data.pkl"
+  batch_size: 256
+
+val_dataloader:
+  _target_: src.training.dataloader.CustomDataLoader
+  data_path: "data/tokenized_data/val_tokenizer_1000_data.pkl"
   batch_size: 256
 
 trainer:
@@ -15,7 +20,8 @@ trainer:
   num_nodes: 1
   precision: 32
   num_sanity_val_steps: 0
-  check_val_every_n_epoch: 1
+  val_check_interval: 0.05
+  enable_model_summary: true
   logger:
       _target_: lightning.pytorch.loggers.TensorBoardLogger
       save_dir: ${hydra:runtime.output_dir}
