@@ -24,5 +24,8 @@ dataset = load_dataset("wikimedia/wikipedia", "20231101.el")
 
 for tokenizer in tokenizer_dict.keys():
     tokenized_data = tokenize_txt_dataset(tokenizer_dict[tokenizer], dataset)
+
+    flattened_data = [token for token_list in tokenized_data for token in token_list]
+
     with open(f"data/tokenized_data/{tokenizer}_data.pkl", "wb") as file:
-        pickle.dump(tokenized_data, file)
+        pickle.dump(flattened_data, file)

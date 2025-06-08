@@ -16,6 +16,9 @@ dependencies = [
   "lightning",
   "datasets",
   "matplotlib",
+  "mlflow",
+  "hydra-core",
+  "tensorboard"
 ]
 
 requires-python = ">=3.10"
@@ -41,6 +44,7 @@ dev = [
   "pre-commit",
   "rouge",
   "sacrebleu",
+  "mlx"
 ]
 
 [tool.hatch.version]

@@ -168,3 +168,4 @@ tokenizer_5000/
 tokenizer_10000/
 trained_models/
 challenger_models/
+outputs/

@@ -34,8 +34,10 @@ class GreekGPT(nn.Module):
         self.layer_norm = nn.LayerNorm(n_embed)
         self.llm_head = nn.Linear(n_embed, vocab_size)
 
+        self.context_len = context_len
+
     def forward(self, idxs):
-        idxs = idxs.view(-1, 256)
+        # idxs = idxs.view(-1, self.context_len)
         _, T = idxs.shape
 
         token_embed = self.embed_layer(idxs)
@@ -59,7 +61,7 @@ class LanguageModel(L.LightningModule):
         lr: float = 1e-3,
     ):
         super().__init__()
-        self.save_hyperparameters()
+        self.save_hyperparameters(ignore=["model"])
 
         self.model = model
 

@@ -1,0 +1,45 @@
+defaults:
+  - _self_
+  - model: greek_gpt_test
+
+train_dataloader:
+  _target_: src.training.dataloader.CustomDataLoader
+  data_path: "data/tokenized_data/tokenizer_1000_data.pkl"
+  batch_size: 256
+
+trainer:
+  _target_: lightning.Trainer
+  accelerator: mps
+  strategy: auto
+  devices: 1
+  num_nodes: 1
+  precision: 32
+  num_sanity_val_steps: 0
+  check_val_every_n_epoch: 1
+  logger:
+      _target_: lightning.pytorch.loggers.TensorBoardLogger
+      save_dir: ${hydra:runtime.output_dir}
+      name: logs
+  # callbacks:
+  #   - _target_: lightning.pytorch.callbacks.LearningRateMonitor
+  #     logging_interval: epoch
+  #   - _target_: lightning.pytorch.callbacks.ModelCheckpoint
+  #     dirpath: ${hydra:runtime.output_dir}/checkpoints
+  #     monitor: val/PackedMSELoss
+  #     save_weights_only: true
+  #     filename: stage_one
+  #     mode: min
+  #     save_top_k: 1
+  #     every_n_epochs: 1
+  #   - _target_: lightning.pytorch.callbacks.EarlyStopping
+  #     monitor: val/PackedMSELoss
+  #     min_delta: 1000
+  #     patience: 20
+  #     mode: min
+  #     strict: false
+  #     verbose: true
+  max_epochs: 1
+  enable_progress_bar: true
+  accumulate_grad_batches: 1
+  gradient_clip_val: 1.0
+  gradient_clip_algorithm: norm
