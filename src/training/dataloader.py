@@ -5,12 +5,12 @@ from torch.utils.data import DataLoader, SequentialSampler, StackDataset, Tensor
 
 
 class CustomDataLoader:
-    def __init__(self, data_path: str, batch_size: int):
+    def __init__(self, data_path: str, batch_size: int, is_test: bool = False):
         self.data_path = data_path
 
-        self.dataset = self._make_stacked_dataset()
+        self.is_test = is_test
 
-        self.dataloader = DataLoader(dataset=self.dataset)
+        self.dataset = self._make_stacked_dataset()
 
         self.batch_size = batch_size
 
@@ -24,6 +24,9 @@ class CustomDataLoader:
     def _load_dataset_from_pkl(self):
         with open(self.data_path, "rb") as data:
             dataset = pickle.load(data)
+
+        if self.is_test:
+            dataset = dataset[:10_000]
 
         return dataset
 
