@@ -19,6 +19,7 @@ class CustomDataLoader:
             dataset=self.dataset,
             batch_size=self.batch_size,
             sampler=SequentialSampler(self.dataset),
+            num_workers=10,
         )
 
     def _load_dataset_from_pkl(self):
