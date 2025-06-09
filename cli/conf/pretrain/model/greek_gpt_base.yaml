@@ -1,4 +1,4 @@
-_target_: torch_implementation.language_model.LanguageModel
+_target_: torch_implementation.language_model.GreekGPTPretrain
 model:
   _target_: torch_implementation.language_model.GreekGPT
   vocab_size: 5000

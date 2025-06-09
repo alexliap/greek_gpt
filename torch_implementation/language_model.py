@@ -41,7 +41,7 @@ class GreekGPT(nn.Module):
         _, T = idxs.shape
 
         token_embed = self.embed_layer(idxs)
-        position_embed = self.positional_embed(torch.arange(0, T).to("cuda"))
+        position_embed = self.positional_embed(torch.arange(0, T).to("cpu"))
         x = token_embed + position_embed
         x = self.blocks(x)
         x = self.layer_norm(x)
@@ -54,7 +54,7 @@ class GreekGPT(nn.Module):
         return sum(p.numel() for p in self.parameters())
 
 
-class LanguageModel(L.LightningModule):
+class GreekGPTPretrain(L.LightningModule):
     def __init__(
         self,
         model: GreekGPT,
@@ -99,3 +99,23 @@ class LanguageModel(L.LightningModule):
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(params=self.parameters(), lr=self.lr)
         return optimizer
+
+    def generate(
+        self,
+        query: str,
+        tokenizer,
+        max_tokens: int,
+        temperature: float = 1.0,
+    ):
+        for _ in range(max_tokens):
+            tokens = torch.tensor(tokenizer(query)["input_ids"]).reshape(1, -1)
+            if len(tokens) > 256:
+                tokens = tokens[-256:]
+            out = self.forward(tokens) / temperature
+            out = out[-1, :]
+            s_out = F.softmax(out)
+
+            chosen_token = s_out.multinomial(num_samples=1)
+            query += tokenizer.decode(chosen_token.item())
+
+        return query

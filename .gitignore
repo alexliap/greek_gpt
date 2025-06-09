@@ -170,3 +170,4 @@ trained_models/
 challenger_models/
 outputs/
 .python-version
+checkpoints/
