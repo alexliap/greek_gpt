@@ -1,4 +1,5 @@
 import hydra
+import torch
 from hydra.utils import instantiate
 from omegaconf import DictConfig
 
@@ -8,6 +9,8 @@ from omegaconf import DictConfig
 )
 def main(cfg: DictConfig):
     pretrain_lm = instantiate(cfg.model)
+
+    pretrain_lm = torch.compile(pretrain_lm)
 
     train_dataloader = instantiate(cfg.train_dataloader).get_dataloder()
 
