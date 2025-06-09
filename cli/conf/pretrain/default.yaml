@@ -1,15 +1,15 @@
 defaults:
   - _self_
-  - model: greek_gpt_test
+  - model: greek_gpt_base
 
 train_dataloader:
   _target_: src.training.dataloader.CustomDataLoader
-  data_path: "data/tokenized_data/train_tokenizer_1000_data.pkl"
+  data_path: "data/tokenized_data/train_tokenizer_5000_data.pkl"
   batch_size: 256
 
 val_dataloader:
   _target_: src.training.dataloader.CustomDataLoader
-  data_path: "data/tokenized_data/val_tokenizer_1000_data.pkl"
+  data_path: "data/tokenized_data/val_tokenizer_5000_data.pkl"
   batch_size: 256
 
 trainer:

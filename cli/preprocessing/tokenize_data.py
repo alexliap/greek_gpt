@@ -20,7 +20,7 @@ if __name__ == "__main__":
     parser.add_argument("--vocab-size", required=True)
     args = parser.parse_args()
 
-    vocab_size = int(args.vocab_size)
+    vocab_size = args.vocab_size
 
     tokenizer = AutoTokenizer.from_pretrained("tokenizer_" + vocab_size)
 
