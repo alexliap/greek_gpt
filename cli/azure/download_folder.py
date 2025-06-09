@@ -30,6 +30,8 @@ if __name__ == "__main__":
         if args.sub_dir in blob_name:
             blob_client = container_client.get_blob_client(blob_name)
             logging.info(f"Downloading {blob_name} ...")
+            blob_sub_dirs = "/".join(blob_name.split("/")[:-1])
+            os.makedirs(blob_sub_dirs, exist_ok=True)
             with open(file=os.path.join("./", blob_name), mode="wb") as sample_blob:
                 try:
                     download_stream = blob_client.download_blob()

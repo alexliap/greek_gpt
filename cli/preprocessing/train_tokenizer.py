@@ -1,3 +1,4 @@
+import argparse
 import os
 
 from tqdm import tqdm
@@ -31,20 +32,15 @@ def batch_iterator(dataset: str, batch_size: int):
         yield dataset[i : i + batch_size]
 
 
-tokenizer_1000 = tokenizer.train_new_from_iterator(
-    batch_iterator(dataset, 10_000), vocab_size=1000 + UNICODE_CHARS_SIZE
-)
-tokenizer_2000 = tokenizer.train_new_from_iterator(
-    batch_iterator(dataset, 10_000), vocab_size=2000 + UNICODE_CHARS_SIZE
-)
-tokenizer_5000 = tokenizer.train_new_from_iterator(
-    batch_iterator(dataset, 10_000), vocab_size=5000 + UNICODE_CHARS_SIZE
-)
-tokenizer_10000 = tokenizer.train_new_from_iterator(
-    batch_iterator(dataset, 10_000), vocab_size=10_000 + UNICODE_CHARS_SIZE
-)
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Download folder from Azure")
+    parser.add_argument("--vocab-size", required=True)
+    args = parser.parse_args()
 
-tokenizer_1000.save_pretrained("tokenizer_1000/")
-tokenizer_2000.save_pretrained("tokenizer_2000/")
-tokenizer_5000.save_pretrained("tokenizer_5000/")
-tokenizer_10000.save_pretrained("tokenizer_10000/")
+    vocab_size = int(args.vocab_size)
+
+    tokenizer = tokenizer.train_new_from_iterator(
+        batch_iterator(dataset, vocab_size), vocab_size=vocab_size + UNICODE_CHARS_SIZE
+    )
+
+    tokenizer.save_pretrained(f"tokenizer_{vocab_size}/")
