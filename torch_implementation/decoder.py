@@ -1,10 +1,62 @@
 import torch.nn as nn
 
-from torch_implementation.experts import SparseMoE
+from torch_implementation.experts import Expert, SparseMoE
 from torch_implementation.multihead import MultiHeadAttention
 
 
 class Transformer(nn.Module):
+    def __init__(
+        self,
+        context_len: int,
+        n_embed: int,
+        n_heads: int,
+        dropout: float = 0.2,
+    ):
+        super().__init__()
+        self.multi_attention = MultiHeadAttention(
+            context_len=context_len, n_heads=n_heads, n_embed=n_embed
+        )
+        self.mlp = Expert(n_embed=n_embed, dropout=dropout)
+        self.layernorm_1 = nn.LayerNorm(n_embed)
+        self.layernorm_2 = nn.LayerNorm(n_embed)
+
+    def forward(self, x):
+        x = x + self.multi_attention(self.layernorm_1(x))
+        x = x + self.mlp(self.layernorm_2(x))
+        return x
+
+
+class TransformerBlocks(nn.Module):
+    def __init__(
+        self,
+        n_blocks: int,
+        context_len: int,
+        n_embed: int,
+        n_heads: int,
+        dropout: float = 0.2,
+    ):
+        super().__init__()
+        self.blocks = nn.ModuleList(
+            [
+                Transformer(
+                    context_len=context_len,
+                    n_embed=n_embed,
+                    n_heads=n_heads,
+                    dropout=dropout,
+                )
+                for _ in range(n_blocks)
+            ]
+        )
+        self.laynernorm = nn.LayerNorm(n_embed)
+
+    def forward(self, x):
+        for transformer in self.blocks:
+            x = transformer(x)
+        x = self.laynernorm(x)
+        return x
+
+
+class MoETransformer(nn.Module):
     def __init__(
         self,
         context_len: int,
@@ -30,7 +82,7 @@ class Transformer(nn.Module):
         return x
 
 
-class TransformerBlocks(nn.Module):
+class MoETransformerBlocks(nn.Module):
     def __init__(
         self,
         n_blocks: int,
@@ -44,7 +96,7 @@ class TransformerBlocks(nn.Module):
         super().__init__()
         self.blocks = nn.ModuleList(
             [
-                Transformer(
+                MoETransformer(
                     context_len=context_len,
                     n_embed=n_embed,
                     n_heads=n_heads,
