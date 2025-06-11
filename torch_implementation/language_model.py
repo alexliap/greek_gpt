@@ -27,8 +27,6 @@ class GreekGPT(nn.Module):
             context_len=context_len,
             n_embed=n_embed,
             n_heads=n_heads,
-            n_experts=n_experts,
-            top_k=top_k,
             dropout=dropout,
         )
         self.layer_norm = nn.LayerNorm(n_embed)
@@ -58,7 +56,7 @@ class GreekGPTPretrain(L.LightningModule):
     def __init__(
         self,
         model: GreekGPT,
-        lr: float = 1e-3,
+        lr: float = 3e-4,
     ):
         super().__init__()
         self.save_hyperparameters(ignore=["model"])
@@ -73,8 +71,8 @@ class GreekGPTPretrain(L.LightningModule):
     def training_step(self, batch, batch_idx):
         # training_step defines the train loop.
         x, y = batch
-        x = x[0]
-        y = y[0]
+        x = x.view(-1, 256)
+        y = y.view(-1, 256)
 
         logits = self.forward(x)
         loss = F.cross_entropy(logits, y.view(-1))
@@ -86,8 +84,8 @@ class GreekGPTPretrain(L.LightningModule):
     def validation_step(self, batch, batch_idx):
         # training_step defines the train loop.
         x, y = batch
-        x = x[0]
-        y = y[0]
+        x = x.view(-1, 256)
+        y = y.view(-1, 256)
 
         logits = self.forward(x)
         loss = F.cross_entropy(logits, y.view(-1))

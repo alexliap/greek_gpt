@@ -6,7 +6,5 @@ model:
   context_len: 256
   n_blocks: 10
   n_heads: 8
-  n_experts: 4
-  top_k: 2
   dropout: 0.2
 lr: 1e-4
