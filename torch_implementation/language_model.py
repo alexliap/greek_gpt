@@ -41,7 +41,7 @@ class GreekGPT(nn.Module):
         _, T = idxs.shape
 
         token_embed = self.embed_layer(idxs)
-        position_embed = self.positional_embed(torch.arange(0, T).to("cpu"))
+        position_embed = self.positional_embed(torch.arange(0, T, device=idxs.device))
         x = token_embed + position_embed
         x = self.blocks(x)
         x = self.layer_norm(x)
@@ -113,7 +113,13 @@ class GreekGPTPretrain(L.LightningModule):
                 tokens = tokens[-256:]
             out = self.forward(tokens) / temperature
             out = out[-1, :]
-            s_out = F.softmax(out)
+            s_out = F.softmax(out, dim=-1)
+
+            # do top-k sampling of 50 (huggingface pipeline default)
+            # topk_probs here becomes (5, 50), topk_indices is (5, 50)
+            topk_probs, topk_indices = torch.topk(s_out, 50, dim=-1)
+
+            chosen_token = torch.multinomial(topk_probs, 1)  # (B, 1)
 
             chosen_token = s_out.multinomial(num_samples=1)
             query += tokenizer.decode(chosen_token.item())
