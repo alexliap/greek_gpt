@@ -5,6 +5,6 @@ model:
   n_embed: 512
   context_len: 256
   n_blocks: 10
-  n_heads: 8
+  n_heads: 10
   dropout: 0.2
-lr: 1e-4
+lr: 3e-4

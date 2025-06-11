@@ -1,4 +1,4 @@
-_target_: torch_implementation.language_model.LanguageModel
+_target_: torch_implementation.language_model.GreekGPTPretrain
 model:
   _target_: torch_implementation.language_model.GreekGPT
   vocab_size: 1000
@@ -6,7 +6,5 @@ model:
   context_len: 256
   n_blocks: 2
   n_heads: 2
-  n_experts: 2
-  top_k: 1
   dropout: 0.2
-lr: 1e-4
+lr: 3e-4

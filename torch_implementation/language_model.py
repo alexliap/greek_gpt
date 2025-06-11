@@ -14,8 +14,6 @@ class GreekGPT(nn.Module):
         context_len: int,
         n_blocks: int,
         n_heads: int,
-        n_experts: int = 4,
-        top_k: int = 2,
         dropout: float = 0.2,
     ):
         super().__init__()
@@ -70,9 +68,7 @@ class GreekGPTPretrain(L.LightningModule):
 
     def training_step(self, batch, batch_idx):
         # training_step defines the train loop.
-        x, y = batch
-        x = x.view(-1, 256)
-        y = y.view(-1, 256)
+        x, y = batch[0], batch[1]
 
         logits = self.forward(x)
         loss = F.cross_entropy(logits, y.view(-1))
@@ -83,9 +79,7 @@ class GreekGPTPretrain(L.LightningModule):
 
     def validation_step(self, batch, batch_idx):
         # training_step defines the train loop.
-        x, y = batch
-        x = x.view(-1, 256)
-        y = y.view(-1, 256)
+        x, y = batch[0], batch[1]
 
         logits = self.forward(x)
         loss = F.cross_entropy(logits, y.view(-1))
@@ -115,11 +109,10 @@ class GreekGPTPretrain(L.LightningModule):
 
             # do top-k sampling of 50 (huggingface pipeline default)
             # topk_probs here becomes (5, 50), topk_indices is (5, 50)
-            topk_probs, topk_indices = torch.topk(s_out, 50, dim=-1)
+            topk_probs, _ = torch.topk(s_out, 50, dim=-1)
 
             chosen_token = torch.multinomial(topk_probs, 1)  # (B, 1)
 
-            chosen_token = s_out.multinomial(num_samples=1)
             query += tokenizer.decode(chosen_token.item())
 
         return query
