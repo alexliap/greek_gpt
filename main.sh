@@ -4,4 +4,6 @@
 
 source .venv/bin/activate
 
+export TORCH_COMPILE_DEBUG=1
+
 python train_llm_pytorch.py

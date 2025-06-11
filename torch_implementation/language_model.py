@@ -37,7 +37,7 @@ class GreekGPT(nn.Module):
         _, T = idxs.shape
 
         token_embed = self.embed_layer(idxs)
-        position_embed = self.positional_embed(torch.arange(0, T, device=idxs.device))
+        position_embed = self.positional_embed(torch.arange(0, T).to("cuda"))
         x = token_embed + position_embed
         x = self.blocks(x)
         x = self.layer_norm(x)

@@ -11,19 +11,19 @@ train_dataloader:
   _target_: src.training.dataloader.CustomDataLoader
   data_path: "data/tokenized_data/train_tokenizer_5000_data.pkl"
   batch_size: 10
-  block_size: 20
+  block_size: 256
   is_test: true
 
 val_dataloader:
   _target_: src.training.dataloader.CustomDataLoader
   data_path: "data/tokenized_data/val_tokenizer_5000_data.pkl"
   batch_size: 10
-  block_size: 20
+  block_size: 256
   is_test: true
 
 trainer:
   _target_: lightning.Trainer
-  accelerator: cpu
+  accelerator: gpu
   strategy: auto
   devices: 1
   num_nodes: 1

@@ -1,6 +1,6 @@
 import torch.nn as nn
 
-from torch_implementation.experts import Expert, SparseMoE
+from torch_implementation.experts import SparseMoE
 from torch_implementation.multihead import MultiHeadAttention
 
 
@@ -16,7 +16,12 @@ class Transformer(nn.Module):
         self.multi_attention = MultiHeadAttention(
             context_len=context_len, n_heads=n_heads, n_embed=n_embed
         )
-        self.mlp = Expert(n_embed=n_embed, dropout=dropout)
+        self.mlp = self.expert = nn.Sequential(
+            nn.Linear(n_embed, 2 * n_embed),
+            nn.ReLU(),
+            nn.Linear(2 * n_embed, n_embed),
+            nn.Dropout(dropout),
+        )
         self.layernorm_1 = nn.LayerNorm(n_embed)
         self.layernorm_2 = nn.LayerNorm(n_embed)
 
