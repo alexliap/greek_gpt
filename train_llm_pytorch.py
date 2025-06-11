@@ -1,5 +1,4 @@
 import hydra
-import torch
 from hydra.utils import instantiate
 from omegaconf import DictConfig
 
@@ -10,12 +9,12 @@ from omegaconf import DictConfig
 def main(cfg: DictConfig):
     pretrain_lm = instantiate(cfg.model)
 
-    if cfg.ckpt_path:
-        checkpoint = torch.load(cfg.ckpt_path, map_location=cfg.trainer.accelerator)
-        pretrain_lm.load_state_dict(checkpoint["state_dict"])
+    # if cfg.ckpt_path:
+    #     checkpoint = torch.load(cfg.ckpt_path, map_location=cfg.trainer.accelerator)
+    #     pretrain_lm.load_state_dict(checkpoint["state_dict"])
 
-    if cfg.trainer.accelerator == "gpu":
-        pretrain_lm = torch.compile(pretrain_lm)
+    # if cfg.trainer.accelerator == "gpu":
+    # pretrain_lm = torch.compile(pretrain_lm)
 
     train_dataloader = instantiate(cfg.train_dataloader).get_dataloder()
 

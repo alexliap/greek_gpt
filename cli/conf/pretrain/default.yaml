@@ -3,7 +3,7 @@ hydra:
     dir: outputs/pretrain/${hydra:runtime.choices.model}/
 defaults:
   - _self_
-  - model: greek_gpt_test
+  - model: greek_gpt_base
 
 ckpt_path: null
 
@@ -11,14 +11,14 @@ train_dataloader:
   _target_: src.training.dataloader.CustomDataLoader
   data_path: "data/tokenized_data/train_tokenizer_5000_data.pkl"
   batch_size: 10
-  block_size: 32
+  block_size: 20
   is_test: true
 
 val_dataloader:
   _target_: src.training.dataloader.CustomDataLoader
   data_path: "data/tokenized_data/val_tokenizer_5000_data.pkl"
   batch_size: 10
-  block_size: 32
+  block_size: 20
   is_test: true
 
 trainer:
@@ -29,7 +29,7 @@ trainer:
   num_nodes: 1
   precision: 32
   num_sanity_val_steps: 0
-  val_check_interval: 5
+  val_check_interval: 200
   enable_model_summary: true
   logger:
       _target_: lightning.pytorch.loggers.TensorBoardLogger
@@ -43,7 +43,7 @@ trainer:
       filename: "greek_gpt-{step}-{val_ce_loss:.2f}"
       mode: min
       save_top_k: 5
-      every_n_train_steps: 5
+      every_n_train_steps: 200
   #   - _target_: lightning.pytorch.callbacks.EarlyStopping
   #     monitor: val/PackedMSELoss
   #     min_delta: 1000
