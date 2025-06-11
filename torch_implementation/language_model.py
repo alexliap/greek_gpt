@@ -57,7 +57,7 @@ class GreekGPTPretrain(L.LightningModule):
         lr: float = 3e-4,
     ):
         super().__init__()
-        self.save_hyperparameters(ignore=["model"])
+        self.save_hyperparameters()
 
         self.model = model
 
@@ -68,7 +68,7 @@ class GreekGPTPretrain(L.LightningModule):
 
     def training_step(self, batch, batch_idx):
         # training_step defines the train loop.
-        x, y = batch[0], batch[1]
+        x, y = batch[0][0], batch[1][0]
 
         logits = self.forward(x)
         loss = F.cross_entropy(logits, y.view(-1))
@@ -79,7 +79,7 @@ class GreekGPTPretrain(L.LightningModule):
 
     def validation_step(self, batch, batch_idx):
         # training_step defines the train loop.
-        x, y = batch[0], batch[1]
+        x, y = batch[0][0], batch[1][0]
 
         logits = self.forward(x)
         loss = F.cross_entropy(logits, y.view(-1))

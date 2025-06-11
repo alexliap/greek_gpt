@@ -1,6 +1,11 @@
+hydra:
+  run:
+    dir: outputs/pretrain/${hydra:runtime.choices.model}/
 defaults:
   - _self_
-  - model: greek_gpt_base
+  - model: greek_gpt_test
+
+ckpt_path: null
 
 train_dataloader:
   _target_: src.training.dataloader.CustomDataLoader
@@ -24,7 +29,7 @@ trainer:
   num_nodes: 1
   precision: 32
   num_sanity_val_steps: 0
-  val_check_interval: 200
+  val_check_interval: 5
   enable_model_summary: true
   logger:
       _target_: lightning.pytorch.loggers.TensorBoardLogger
@@ -32,13 +37,13 @@ trainer:
       name: logs
   callbacks:
     - _target_: lightning.pytorch.callbacks.ModelCheckpoint
-      dirpath: checkpoints
+      dirpath: ${hydra:runtime.output_dir}/checkpoints
       monitor: val_ce_loss
       save_weights_only: true
       filename: "greek_gpt-{step}-{val_ce_loss:.2f}"
       mode: min
       save_top_k: 5
-      every_n_train_steps: 200
+      every_n_train_steps: 5
   #   - _target_: lightning.pytorch.callbacks.EarlyStopping
   #     monitor: val/PackedMSELoss
   #     min_delta: 1000

@@ -1,7 +1,7 @@
 _target_: torch_implementation.language_model.GreekGPTPretrain
 model:
   _target_: torch_implementation.language_model.GreekGPT
-  vocab_size: 1000
+  vocab_size: 5000
   n_embed: 64
   context_len: 256
   n_blocks: 2
