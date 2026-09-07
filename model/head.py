@@ -1,6 +1,6 @@
 import mlx.core as mx
-import mlx.nn as nn
 import numpy as np
+from mlx import nn
 
 
 class SelfAttentionHead(nn.Module):
