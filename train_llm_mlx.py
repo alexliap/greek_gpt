@@ -1,11 +1,11 @@
 import pickle
 
 import mlx.core as mx
-import mlx.nn as nn
+from core.training import get_batch, loss_fn, training_step, validation_step
+from mlx import nn
 from tqdm import trange
 from transformers import AutoTokenizer
 
-from core.training import get_batch, loss_fn, training_step, validation_step
 from model.language_model import load_model
 
 tokenizer = "tokenizer_10000"
