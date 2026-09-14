@@ -2,7 +2,7 @@ import json
 import os
 
 import mlx.core as mx
-import mlx.nn as nn
+from mlx import nn
 from mlx.optimizers import Adam
 from mlx.utils import tree_flatten
 

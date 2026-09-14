@@ -1,5 +1,5 @@
 import mlx.core as mx
-import mlx.nn as nn
+from mlx import nn
 
 
 def get_batch_sent(data, batch_size, block_size, tokenizer):
