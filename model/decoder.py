@@ -1,6 +1,4 @@
-from typing import Union
-
-import mlx.nn as nn
+from mlx import nn
 
 from model.experts import Expert, SparseMoE
 from model.multihead import MultiHeadAttention
@@ -12,8 +10,8 @@ class Transformer(nn.Module):
         n_embed: int,
         n_heads: int,
         hidden_multiplier: int = 2,
-        n_experts: Union[int, None] = None,
-        top_k: Union[int, None] = None,
+        n_experts: int | None = None,
+        top_k: int | None = None,
         dropout: float = 0.2,
     ):
         super().__init__()
@@ -53,8 +51,8 @@ class TransformerBlocks(nn.Module):
         n_embed: int,
         n_heads: int,
         hidden_multiplier: int = 2,
-        n_experts: Union[int, None] = None,
-        top_k: Union[int, None] = None,
+        n_experts: int | None = None,
+        top_k: int | None = None,
         dropout: float = 0.2,
     ):
         super().__init__()
