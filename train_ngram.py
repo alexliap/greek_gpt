@@ -1,12 +1,12 @@
 import pickle
 
 import mlx.core as mx
-import mlx.nn as nn
+from core.training import get_batch, loss_fn, training_step, validation_step
+from mlx import nn
 from tqdm import trange
 from transformers import AutoTokenizer
 
 from benchmarks.n_grams import NGram
-from core.training import get_batch, loss_fn, training_step, validation_step
 
 tokenizer = "tokenizer_5000"
 tokenizer_obj = AutoTokenizer.from_pretrained(tokenizer)
