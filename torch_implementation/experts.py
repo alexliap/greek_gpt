@@ -1,5 +1,5 @@
 import torch
-import torch.nn as nn
+from torch import nn
 
 from torch_implementation.router import Router
 
