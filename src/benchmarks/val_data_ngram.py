@@ -1,7 +1,7 @@
 import warnings
 
 import mlx.core as mx
-import mlx.nn as nn
+from mlx import nn
 from tqdm import tqdm
 
 from benchmarks.n_grams import NGram
@@ -19,13 +19,13 @@ def bench_ngram(model: NGram, val_data):
         x = mx.array(
             [
                 sentence[i : i + model.context_len]
-                for i in range(0, len(sentence) - model.context_len)
+                for i in range(len(sentence) - model.context_len)
             ]
         )
         y = mx.array(
             [
                 sentence[i + model.context_len]
-                for i in range(0, len(sentence) - model.context_len)
+                for i in range(len(sentence) - model.context_len)
             ]
         )
 
