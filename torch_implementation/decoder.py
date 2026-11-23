@@ -1,4 +1,4 @@
-import torch.nn as nn
+from torch import nn
 
 from torch_implementation.experts import SparseMoE
 from torch_implementation.multihead import MultiHeadAttention
